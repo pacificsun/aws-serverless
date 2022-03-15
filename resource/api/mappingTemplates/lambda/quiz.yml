@@ -1,0 +1,11 @@
+- dataSource: createQuizDataSource
+  type: Mutation #Query, Mutation, Subscription
+  field: createQuiz
+  request: "request/generic-input-request-mapping-template.vtl"
+  response: "response/generic-response-mapping-template.vtl"
+
+- dataSource: getQuizDataSource
+  type: Query #Query, Mutation, Subscription
+  field: getQuiz
+  request: "request/generic-input-request-mapping-template.vtl"
+  response: "response/generic-response-mapping-template.vtl"

@@ -1,0 +1,47 @@
+type Quiz {
+  id: ID
+  tenantId: String
+  courseId: String
+  quizTitle: String
+  description: String
+  questions: [QuestionData]
+}
+
+type QuestionData {
+  id: ID
+  name: String
+  option: [AnswerChoiceData]
+  explanation: String
+}
+
+type AnswerChoiceData {
+  name: String
+  isAnswer: Boolean
+}
+
+type Query {
+  getQuiz(tenantId: ID!, courseId: ID!, id: ID!): Quiz
+}
+
+type Mutation {
+  createQuiz(input: CreateQuizInput!): Quiz
+}
+
+input CreateQuizInput {
+  tenantId: String!
+  courseId: String!
+  quizTitle: String
+  description: String
+  questions: [QuestionAtrributes]
+}
+
+input QuestionAtrributes {
+  name: String
+  options: [AnswerChoice]
+  explanation: String
+}
+
+input AnswerChoice {
+  name: String
+  isAnswer: Boolean
+}

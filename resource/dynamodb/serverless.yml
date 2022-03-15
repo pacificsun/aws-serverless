@@ -1,0 +1,74 @@
+app: myservice
+service: myservice-dynamodb
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "ap-south-1"}
+
+custom:
+  base: ${self:app}-${self:provider.stage}
+  db:
+    table:
+      name: ${self:custom.base}-table
+
+  role:
+    arn: arn:aws:iam::${AWS::AccountId}:role
+    dynamodb:
+      name: ${self:custom.base}-DynamoDB-AppSyncServiceRole
+      arn: ${self:custom.role.arn}/${self:custom.role.dynamodb.name}
+
+resources:
+  Resources:
+    MyServiceTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        # Generate a name based on the stage
+        TableName: ${self:custom.db.table.name}
+        # Set the capacity to auto-scale
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+
+    AppSyncDynamoDBServiceRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:custom.role.dynamodb.name}
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          - PolicyName: ${self:custom.role.dynamodb.name}-Policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "dynamodb:Scan"
+                    - "dynamodb:Query"
+                    - "dynamodb:GetItem"
+                    - "dynamodb:PutItem"
+                    - "dynamodb:DeleteItem"
+                    - "dynamodb:UpdateItem"
+                    - "dynamodb:BatchGetItem"
+                    - "dynamodb:BatchWriteItem"
+                  Resource:
+                    - !Sub "arn:aws:dynamodb:${self:provider.region}:${AWS::AccountId}:table/${self:custom.db.table.name}"
+                    - !Sub "arn:aws:dynamodb:${self:provider.region}:${AWS::AccountId}:table/${self:custom.db.table.name}/*"

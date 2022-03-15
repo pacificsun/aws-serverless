@@ -1,0 +1,37 @@
+app: myserviece
+service: myserviece-quiz-api
+
+plugins:
+  - serverless-bundle # Package our functions with Webpack
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "ap-south-1"}
+  memorySize: 1024 # optional, in MB, default is 1024
+  timeout: 6 # optional, in seconds, default is 6
+  versionFunctions: false # optional, default is true
+
+  # role: arn:aws:iam::350992007016:role/FullAcessForDevs
+
+  environment:
+    APP_STAGE: ${self:provider.stage}
+    TABLE_NAME: ${self:custom.base}-table
+
+custom:
+  base: ${self:app}-${self:provider.stage}
+
+functions:
+  create:
+    handler: src/create.main
+    name: ${self:custom.base}-create-quiz
+    description: deploy to ${self:provider.region} from local
+  get:
+    handler: src/get.main
+    name: ${self:custom.base}-get-quiz
+    description: deploy to ${self:provider.region} from local

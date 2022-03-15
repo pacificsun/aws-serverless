@@ -1,0 +1,109 @@
+service: myservice
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+app: myservieapp
+frameworkVersion: "2"
+
+plugins:
+  - serverless-appsync-plugin
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "ap-south-1"}
+
+custom:
+  base:
+    name: ${self:app}-${self:provider.stage}
+    arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function
+
+  # Lambda namings
+
+  lambda:
+    quizLambda:
+      create:
+        name: ${self:custom.base.name}-create-quiz
+        arn: ${self:custom.base.arn}:${self:custom.lambda.quizLambda.create.name}
+      get:
+        name: ${self:custom.base.name}-get-quiz
+        arn: ${self:custom.base.arn}:${self:custom.lambda.quizLambda.get.name}
+    # IAM
+  role:
+    lambda:
+      name: ${self:custom.base.name}-Lambda-AppSyncServiceRole
+      arn:
+        Fn::GetAtt:
+          - AppSyncLambdaServiceRole
+          - Arn
+    logging:
+      name: ${self:custom.base.name}-Logging-AppSyncServiceRole
+      arn:
+        Fn::GetAtt:
+          - AppSyncLoggingServiceRole
+          - Arn
+  appSync:
+    name: ${self:custom.base.name}-api
+    schema: schema.graphql
+    authenticationType: API_KEY
+    apiKeys:
+      - apiKey
+    mappingTemplatesLocation: mapping-templates
+    mappingTemplates:
+      - ${file(./mappingTemplates/lambda/quiz.yml)}
+
+    dataSources:
+      - ${file(./dataSources/lambda/quiz.yml)}
+
+resources:
+  Resources:
+    # AppSync lambda role
+    AppSyncLambdaServiceRole: # AppSync lambda role
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:custom.role.lambda.name}
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          - PolicyName: ${self:custom.role.lambda.name}-Policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "lambda:*"
+                  Resource: "*"
+
+    # Where AppSyncLoggingServiceRole is a rple with CloudWatch logs write access
+    AppSyncLoggingServiceRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: ${self:custom.role.logging.name}
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          - PolicyName: ${self:custom.role.logging.name}-Policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "*"
