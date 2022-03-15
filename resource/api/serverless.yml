@@ -29,7 +29,8 @@ custom:
       get:
         name: ${self:custom.base.name}-get-quiz
         arn: ${self:custom.base.arn}:${self:custom.lambda.quizLambda.get.name}
-    # IAM
+    # IAM to lambda for creating log in cloud watch
+
   role:
     lambda:
       name: ${self:custom.base.name}-Lambda-AppSyncServiceRole
