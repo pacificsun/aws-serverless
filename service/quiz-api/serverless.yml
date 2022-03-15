@@ -17,7 +17,7 @@ provider:
   timeout: 6 # optional, in seconds, default is 6
   versionFunctions: false # optional, default is true
 
-  # role: arn:aws:iam::350992007016:role/FullAcessForDevs
+  role: arn:aws:iam::534769325491:role/accessForDev
 
   environment:
     APP_STAGE: ${self:provider.stage}
