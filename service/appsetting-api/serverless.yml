@@ -1,5 +1,5 @@
 app: myservice
-service: myservice-quiz-api
+service: myservice-appsetting-api
 
 plugins:
   - serverless-bundle # Package our functions with Webpack
@@ -27,11 +27,11 @@ custom:
   base: ${self:app}-${self:provider.stage}
 
 functions:
-  create:
-    handler: src/create.main
-    name: ${self:custom.base}-create-quiz
+  createHobbies:
+    handler: src/createHobbies.main
+    name: ${self:custom.base}-create-hobbies
     description: deploy to ${self:provider.region} from local
-  get:
-    handler: src/get.main
-    name: ${self:custom.base}-get-quiz
+  getHobbies:
+    handler: src/getHobbies.main
+    name: ${self:custom.base}-get-hobbies
     description: deploy to ${self:provider.region} from local
