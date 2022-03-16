@@ -19,12 +19,48 @@ type AnswerChoiceData {
   isAnswer: Boolean
 }
 
+type AppSettingHobbies {
+  createdAt: String
+  updatedAt: String
+  appSettingHobbies: [HobbiesGroup] # will be mutiple like sports, creativity etc
+}
+
+type HobbiesGroup {
+  id: ID
+  name: String
+  subHobbies: [SubHobbies]
+}
+
+type SubHobbies {
+  id: ID
+  name: String
+  url: String
+}
+
 type Query {
   getQuiz(tenantId: ID!, courseId: ID!, id: ID!): Quiz
+  getAppSettingHobbies: AppSettingHobbies
 }
 
 type Mutation {
   createQuiz(input: CreateQuizInput!): Quiz
+  createAppSettingHobbies(input: AppSettingHobbiesInput!): AppSettingHobbies
+}
+
+input AppSettingHobbiesInput {
+  hobbies: [HobbiesGroupInput] # will be mutiple like sports, creativity etc
+}
+
+input HobbiesGroupInput {
+  id: ID!
+  name: String!
+  subHobbies: [SubHobbiesInput]
+}
+
+input SubHobbiesInput {
+  id: ID!
+  name: String!
+  url: String
 }
 
 input CreateQuizInput {

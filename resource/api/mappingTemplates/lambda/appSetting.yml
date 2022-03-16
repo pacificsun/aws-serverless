@@ -1,0 +1,11 @@
+- dataSource: createAppSettingHobbiesDataSource
+  type: Mutation #Query, Mutation, Subscription
+  field: createAppSettingHobbies
+  request: "request/generic-input-request-mapping-template.vtl"
+  response: "response/generic-response-mapping-template.vtl"
+
+- dataSource: getAppSettingHobbiesDataSource
+  type: Query #Query, Mutation, Subscription
+  field: getAppSettingHobbies
+  request: "request/generic-input-request-mapping-template.vtl"
+  response: "response/generic-response-mapping-template.vtl"

@@ -2,7 +2,7 @@ service: myservice
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
-app: myservieapp
+app: myservice
 frameworkVersion: "2"
 
 plugins:
@@ -17,7 +17,7 @@ provider:
 custom:
   base:
     name: ${self:app}-${self:provider.stage}
-    arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function
+    arn: arn:aws:lambda:${self:provider.region}:534769325491:function
 
   # Lambda namings
 
@@ -29,6 +29,14 @@ custom:
       get:
         name: ${self:custom.base.name}-get-quiz
         arn: ${self:custom.base.arn}:${self:custom.lambda.quizLambda.get.name}
+    appSettingHobbies:
+      createHobbies:
+        name: ${self:custom.base.name}-create-hobbies
+        arn: ${self:custom.base.arn}:${self:custom.lambda.appSettingHobbies.createHobbies.name}
+      getHobbies:
+        name: ${self:custom.base.name}-get-hobbies
+        arn: ${self:custom.base.arn}:${self:custom.lambda.appSettingHobbies.getHobbies.name}
+
     # IAM to lambda for creating log in cloud watch
 
   role:
@@ -53,9 +61,11 @@ custom:
     mappingTemplatesLocation: mapping-templates
     mappingTemplates:
       - ${file(./mappingTemplates/lambda/quiz.yml)}
+      - ${file(./mappingTemplates/lambda/appSetting.yml)}
 
     dataSources:
       - ${file(./dataSources/lambda/quiz.yml)}
+      - ${file(./dataSources/lambda/appSetting.yml)}
 
 resources:
   Resources:

@@ -1,0 +1,13 @@
+- type: AWS_LAMBDA
+  name: createAppSettingHobbiesDataSource # data source name
+  description: "Lambda DataSource"
+  config:
+    lambdaFunctionArn: ${self:custom.lambda.appSettingHobbies.createHobbies.arn}
+    serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
+
+- type: AWS_LAMBDA
+  name: getAppSettingHobbiesDataSource # data source name
+  description: "Lambda DataSource"
+  config:
+    lambdaFunctionArn: ${self:custom.lambda.appSettingHobbies.getHobbies.arn}
+    serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
