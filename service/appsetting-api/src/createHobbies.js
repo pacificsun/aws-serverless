@@ -8,7 +8,7 @@ export const main = async (event) => {
     TableName: process.env.TABLE_NAME,
     Item: {
       PK: "APPSETTING",
-      SK: "#METADATA",
+      SK: "#HOBBIES",
       appSettingHobbies: event.hobbies,
       createdAt: timestamp,
       updatedAt: timestamp,

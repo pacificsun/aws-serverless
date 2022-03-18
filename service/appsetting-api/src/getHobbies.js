@@ -7,7 +7,7 @@ export const main = async (event) => {
     TableName: process.env.TABLE_NAME,
     Key: {
       PK: "APPSETTING",
-      SK: "#METADATA",
+      SK: "#HOBBIES",
     },
   };
 
